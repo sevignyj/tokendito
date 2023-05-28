@@ -48,16 +48,18 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        push: false
+        push: true
+        sbom: true
         platforms: linux/amd64,linux/arm64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
     - name: Sign and push docker image
       uses: sudo-bot/action-docker-sign@latest
       with:
-        image-ref: "docker.io/jpsevigny/jptest:1.3.0"
+        image-ref: "docker.io/jpsevigny/jptest:1.4.0"
         private-key-id: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
         private-key: "${{ secrets.DOCKER_PRIVATE_KEY }}"
         private-key-passphrase: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
