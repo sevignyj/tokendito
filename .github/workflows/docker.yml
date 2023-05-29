@@ -66,7 +66,6 @@ jobs:
         echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker trust sign {}
         echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker push {}
       env:
-        DOCKER_CONTENT_TRUST: 1
         DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
         DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
         DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
