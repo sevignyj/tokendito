@@ -62,7 +62,7 @@ jobs:
         echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
         chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
         docker trust key load ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key --name "${DOCKER_PRIVATE_KEY_ID}"
-        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker pulla {}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker pull {}
         echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker trust sign {}
         echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker push {}
       env:
