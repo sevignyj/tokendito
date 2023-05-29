@@ -73,6 +73,7 @@ jobs:
       uses: uraimo/run-on-arch-action@v2
       with: 
         arch: arm64
+        distro: ubuntu-latest
     - name: sign arm64
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
       run: |
