@@ -48,7 +48,8 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        load: true
+        push: true
+        sbom: true
         platforms: linux/amd64,linux/arm64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -61,9 +62,9 @@ jobs:
         echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
         chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
         docker trust key load ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key --name "${DOCKER_PRIVATE_KEY_ID}"
-        docker images
-        echo "${{ steps.meta.outputs.tags }}" |  xargs -I {} -n 1 docker trust sign --local {}
-        echo "${{ steps.meta.outputs.tags }}" |  xargs -I {} -n 1 docker push {}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker pulla {}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker trust sign {}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -I {} -n 1 docker push {}
       env:
         DOCKER_CONTENT_TRUST: 1
         DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
