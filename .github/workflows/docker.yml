@@ -70,7 +70,7 @@ jobs:
         DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
         DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
     - name: sign images for arm64
-    - uses: uraimo/run-on-arch-action@v2
+      uses: uraimo/run-on-arch-action@v2
       with: 
         arch: arm64
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
