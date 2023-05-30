@@ -14,10 +14,6 @@ jobs:
       with: 
         arch: aarch64
         distro: ubuntu22.04
-        env: |
-          DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
-          DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
-          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
         run: |
           mkdir -p ~/.docker/trust/private
           echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
@@ -26,3 +22,7 @@ jobs:
           docker pull jpsevigny/jptest:1.22.0
           docker trust sign jpsevigny/jptest:1.22.0
           docker push jpsevigny/jptest:1.22.0
+      env:
+        DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
+        DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
+        DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
