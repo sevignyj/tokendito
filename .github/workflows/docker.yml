@@ -30,11 +30,13 @@ jobs:
       with:
         username: jpsevigny
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Extract Docker metadata
-      id: meta
+    - name: arm64 Docker metadata
+      id: metaamd64
       uses: docker/metadata-action@v4
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        flavor: |
+          suffix=-amd64
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -47,14 +49,43 @@ jobs:
     - name: Build container
       uses: docker/build-push-action@v4
       with:
+        platforms: linux/amd64
         context: .
         push: true
         sbom: true
-        platforms: linux/amd64,linux/arm64
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.metaamd64.outputs.tags }}
+        labels: ${{ steps.metaamd64.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: arm64 Docker metadata
+      id: metaarm64
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        flavor: |
+          suffix=-arm64
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,format=long
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}.{{minor}}.{{patch}}
+    - name: Build container
+      uses: docker/build-push-action@v4
+      with:
+        platforms: linux/arm64
+        context: .
+        push: true
+        sbom: true
+        tags: ${{ steps.metaarm64.outputs.tags }}
+        labels: ${{ steps.metaarm64.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
 #    - name: sign images and push
 #      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 #      run: |
