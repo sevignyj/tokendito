@@ -14,6 +14,10 @@ jobs:
       with: 
         arch: aarch64
         distro: ubuntu22.04
+        env: |
+            DOCKER_PRIVATE_KEY_ID: ${DOCKER_PRIVATE_KEY_ID}
+            DOCKER_PRIVATE_KEY: ${DOCKER_PRIVATE_KEY}
+            DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE}
         run: |
           mkdir -p ~/.docker/trust/private
           echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
