@@ -9,16 +9,16 @@ env:
 
 jobs:
   arm64_sign:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-18.04
     name: Sign container for arm64 arch.
     strategy:
       fail-fast: false
     steps:
-    - uses: uraimo/run-on-arch-action@v2.1.2
+    - uses: uraimo/run-on-arch-action@v2.5.0
       name: sign on arm64
       with: 
         arch: arm64
-        distro: ubuntu22.04
+        distro: ubuntu18.04
         env: |
           DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
           DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
