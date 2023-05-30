@@ -9,7 +9,7 @@ env:
 
 jobs:
   arm64_sign:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Sign container for arm64 arch.
     strategy:
       fail-fast: false
@@ -18,7 +18,6 @@ jobs:
       name: sign on arm64
       with: 
         arch: arm64
-        distro: ubuntu18.04
         env: |
           DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
           DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
