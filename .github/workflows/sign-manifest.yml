@@ -2,6 +2,7 @@ on:
   push:
     branches: '**'
 
+jobs:
   sign-manifest:
     name: Sign the docker hub manifest
     runs-on: ubuntu-latest
