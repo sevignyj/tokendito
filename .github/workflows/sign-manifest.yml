@@ -28,8 +28,8 @@ jobs:
         - name: Create a manifest
           run: |
             DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create docker.io/jpsevigny/jptest:1 \
-                docker.io/jpsevigny/jptest:1.amd64 \
-                docker.io/jpsevigny/jptest:1.arm64
+                docker.io/jpsevigny/jptest:1-amd64 \
+                docker.io/jpsevigny/jptest:1-arm64
                 --amend
 
         - name: Sign and push the manifest
