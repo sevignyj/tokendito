@@ -30,7 +30,7 @@ jobs:
       with:
         username: jpsevigny
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: arm64 Docker metadata
+    - name: amd64 Docker metadata
       id: metaamd64
       uses: docker/metadata-action@v4
       with:
