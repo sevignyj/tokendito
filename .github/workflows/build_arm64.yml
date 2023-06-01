@@ -1,0 +1,92 @@
+name: Publish to Dockerhub
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: jpsevigny/jptest
+
+jobs:
+  dockerbuild:
+    name: Docker Container
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        buildkitd-flags: --debug
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: jpsevigny
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: amd64 Docker metadata
+      id: metaamd64
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        flavor: |
+          suffix=-amd64
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,format=long
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}.{{minor}}.{{patch}}
+    - name: Build container
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      uses: docker/build-push-action@v4
+      with:
+        platforms: linux/amd64
+        context: .
+        push: false
+        tags: ${{ steps.metaamd64.outputs.tags }}
+        labels: ${{ steps.metaamd64.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: sign images and push
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      run: |
+        mkdir -p ~/.docker/trust/private
+        echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
+        chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
+        docker trust key load ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key --name "${DOCKER_PRIVATE_KEY_ID}"
+        echo "${{ steps.metaamd64.outputs.tags }}" | xargs -I {} -n 1 docker pull {}
+        echo "${{ steps.metaamd64.outputs.tags }}" | xargs -I {} -n 1 docker trust sign {}
+        echo "${{ steps.metaamd64.outputs.tags }}" | xargs -I {} -n 1 docker push {}
+      env:
+        DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
+        DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
+        DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
+    - name: Build and push container
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      uses: docker/build-push-action@v4
+      with:
+        platforms: linux/amd64
+        context: .
+        push: false
+        tags: ${{ steps.metaamd64.outputs.tags }}
+        labels: ${{ steps.metaamd64.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Verify signatures
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo "${{ steps.meta.outputs.tags }}" |  xargs -I {} -n 1 docker trust inspect --pretty {}
