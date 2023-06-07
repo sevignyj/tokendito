@@ -99,3 +99,34 @@ jobs:
         name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+  sign: 
+    runs-on: ubuntu-latest
+    needs: 
+      - merge
+    steps: 
+      -
+        name: pull image 
+        run: |
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+        env: 
+          DOCKER_CONTENT_TRUST: 0
+      -
+        name: setup trust signature
+        run: | 
+          mkdir -p ~/.docker/trust/private
+          echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
+          chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
+          docker trust key load ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key --name "${DOCKER_PRIVATE_KEY_ID}"
+        env:
+          DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
+          DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
+          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
+      - 
+        name: sign manifests and push to registry
+        run: |
+          docker trust ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+      - 
+        name: Verify signatures
+        run: |
+          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
