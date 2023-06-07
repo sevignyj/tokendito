@@ -137,7 +137,7 @@ jobs:
       - 
         name: sign manifests and push to registry
         run: |
-          docker trust ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
       - 
         name: Verify signatures
