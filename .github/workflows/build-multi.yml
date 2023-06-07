@@ -107,6 +107,7 @@ jobs:
       -
         name: pull image 
         run: |
+          echo "docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}"
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
         env: 
           DOCKER_CONTENT_TRUST: 0
