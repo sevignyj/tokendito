@@ -38,10 +38,16 @@ jobs:
       -
         name: Build and push amd64
         id: buildamd64
-        run: |
-          echo "docker build . --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64"
-          docker build . --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64"
-          docker push  "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64"
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64" 
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+        env:
+          DOCKER_CONTENT_TRUST: 0
 #          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64
 #        env: 
 #          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
