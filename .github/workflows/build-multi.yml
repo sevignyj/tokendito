@@ -48,8 +48,8 @@ jobs:
         name: Build and push arm64
         id: buildarm64
         run: |
-          echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --load"
-          docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --load
+          echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --push"
+          docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --push
 #          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64
         env: 
           DOCKER_CONTENT_TRUST: 0
