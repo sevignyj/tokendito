@@ -41,12 +41,16 @@ jobs:
         run: |
           echo "docker buildx build . --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --push"
           docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64" --push
+        env: 
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
       - 
         name: Build and push arm64
         id: buildarm64
         run: |
           echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --push"
           docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --push
+        env: 
+          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
   create_manifest:
     runs-on: ubuntu-latest
