@@ -39,16 +39,16 @@ jobs:
         name: Build and push amd64
         id: buildamd64
         run: |
-          echo "docker buildx build . --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --push"
-          docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64" --push
+          echo "docker buildx build . --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --load"
+          docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --load"
         env: 
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
       - 
         name: Build and push arm64
         id: buildarm64
         run: |
-          echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --push"
-          docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --push
+          echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --load"
+          docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --load
         env: 
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
@@ -117,6 +117,7 @@ jobs:
           docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker manifest push --purge ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
         env:
+          DOCKER_CONTENT_TRUST: 1
           DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
           DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
