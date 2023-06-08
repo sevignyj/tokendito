@@ -42,6 +42,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
+          push: true
           tags: "${{ env.REGISTRY_IMAGE }}:${{github.sha}}-amd64"
       - 
         name: Build and push arm64
@@ -50,6 +51,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
+          push: true
           tags: "${{ env.REGISTRY_IMAGE }}:${{github.sha}}-arm64"
 
   create_manifest:
