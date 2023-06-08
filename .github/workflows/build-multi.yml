@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "docker buildx build . --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --push"
           docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64" --push
-          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64
+#          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64
 #        env: 
 #          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
       - 
@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "docker buildx build . --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64 --load"
           docker buildx build . --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64" --load
-          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64
+#          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-arm64
         env: 
           DOCKER_CONTENT_TRUST: 0
  #       env: 
