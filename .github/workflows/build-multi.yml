@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64
-          tags: "${{steps.meta.outputs.version}}-amd64" 
+          tags: "${{env.REGISTRY_IMAGE}}:$${{steps.meta.outputs.version}}-amd64" 
           cache-from: type=gha
           cache-to: type=gha,mode=max
         env:
