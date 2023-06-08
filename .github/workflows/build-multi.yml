@@ -40,7 +40,7 @@ jobs:
         id: buildamd64
         run: |
           echo "docker buildx build . --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --load"
-          docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64 --load"
+          docker buildx build . --platform linux/amd64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64" --load
         env: 
           BUILDX_NO_DEFAULT_ATTESTATIONS: 1
       - 
