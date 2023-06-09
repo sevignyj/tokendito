@@ -109,6 +109,13 @@ jobs:
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
         env:
             DOCKER_CONTENT_TRUST: 1
+      - name: sign manifest
+        run: |
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+        env:
+          DOCKER_CONTENT_TRUST: 0 
       -
         name: Inspect image
         run: |
