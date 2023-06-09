@@ -115,7 +115,10 @@ jobs:
           docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
         env:
-          DOCKER_CONTENT_TRUST: 0 
+          DOCKER_CONTENT_TRUST: 0 # needed to pull unsigned manifest
+          DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
+          DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
+          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
       -
         name: Inspect image
         run: |
