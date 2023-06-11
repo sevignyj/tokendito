@@ -48,7 +48,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
         env:
-          DOCKER_CONTENT_TRUST: 0
+          DOCKER_CONTENT_TRUST: 1
       -
         name: Build and push arm64
         id: buildarm64
@@ -62,7 +62,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
         env:
-          DOCKER_CONTENT_TRUST: 0
+          DOCKER_CONTENT_TRUST: 1
+        run: |
+            docker buildx version
+            docker --version
 #          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest rm ${{env.REGISTRY_IMAGE}}:${{github.sha}}-amd64
 #        env: 
 #          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
