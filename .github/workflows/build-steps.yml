@@ -90,6 +90,8 @@ jobs:
           DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
           DOCKER_PRIVATE_KEY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
+          DOCKER_CLI_EXPERIMENTAL: enabled
+
 
 #  sign: 
 #    runs-on: ubuntu-latest
