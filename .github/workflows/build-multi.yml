@@ -111,6 +111,9 @@ jobs:
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
         env:
             DOCKER_CONTENT_TRUST: 1
+            DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
+            DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
+            DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
       - name: sign manifest
         run: |
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
