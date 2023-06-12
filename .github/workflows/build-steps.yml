@@ -118,6 +118,6 @@ jobs:
         name: check that secure download works
         run: |
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
-          docker run -it ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}  --version
+          docker run ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}  --version
         env:
           DOCKER_CONTENT_TRUST: 1
