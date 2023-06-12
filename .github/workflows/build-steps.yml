@@ -1,5 +1,5 @@
-name: multibuild
-on:
+name:workingsolution
+onit :
     push:
         tags:
         - '[0-9]+.[0-9]+.[0-9]+'
