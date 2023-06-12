@@ -1,12 +1,13 @@
-name:workingsolution
-onit :
-    push:
-        tags:
-        - '[0-9]+.[0-9]+.[0-9]+'
+name: workingsolution
+
+on:
+  push:
+    tags:
+     - '[0-9]+.[0-9]+.[0-9]+'
 
 env:
-    REGISTRY: docker.io
-    REGISTRY_IMAGE: jpsevigny/jptest
+  REGISTRY: docker.io
+  REGISTRY_IMAGE: jpsevigny/jptest
 
 jobs:
   build:
