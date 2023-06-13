@@ -84,6 +84,7 @@ jobs:
       -
         name: create files for signing
         run: | 
+          echo "we have ${{ fromJSON(needs.matrix-prep-versions.outputs.versions) }} "
           mkdir -p ~/.docker/trust/private
           echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
           chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
