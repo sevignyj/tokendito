@@ -1,4 +1,4 @@
-name: workingsolution
+name: buildandsign
 
 on:
   push:
@@ -85,21 +85,20 @@ jobs:
           chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
           docker trust key load ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key --name "${DOCKER_PRIVATE_KEY_ID}"
         env: 
-#          DOCKER_CONTENT_TRUST: 0
           DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
           DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
-#          DOCKER_PRIVATE_KEY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
-#          DOCKER_CLI_EXPERIMENTAL: enabled
       -
         name: create manifest and push it
         run: | 
           echo "version is ${{ steps.meta.outputs.version }}" 
+          # create and sign "$version" manifest
           DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
           docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
           docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
+          # create and sign  "latest" manifest
           DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:latest --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
           docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
           docker pull ${{ env.REGISTRY_IMAGE }}:latest
@@ -107,9 +106,7 @@ jobs:
           docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
         env: 
           DOCKER_CONTENT_TRUST: 0
-#          DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
-#          DOCKER_PRIVATE_KEY: "${{ secrets.DOCKER_PRIVATE_KEY }}"
-#          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
+          DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
 #          DOCKER_PRIVATE_KEY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
 #          DOCKER_CLI_EXPERIMENTAL: enabled
       - 
