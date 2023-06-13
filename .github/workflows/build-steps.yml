@@ -40,28 +40,17 @@ jobs:
         name: Build and push amd64
         id: buildamd64
         run: |
-          docker buildx version
-          docker --version
           echo "docker buildx build . --provenance=false --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --push"
           docker buildx build . --provenance=false --platform linux/amd64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --push
-
-        env:
-          DOCKER_CONTENT_TRUST: 1
-          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
       - 
         name: Build and push arm64
         id: buildarm64
         run: |
-          docker buildx version
-          docker --version
           echo "docker buildx build . --provenance=false --platform linux/arm64 --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64 --push"
           docker buildx build . --provenance=false --platform linux/arm64 --tag "${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64" --push
-        env: 
-          DOCKER_CONTENT_TRUST: 1
-          BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
-  create_manifest:
-    runs-on: ubuntu-latest
+  matrix-prep-version:
+    runs-on: unbuntu-latest
     needs:
       - build
     steps:
@@ -71,6 +60,21 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY_IMAGE }}
+      - id: latest_label
+        run: echo "version=lastest" >> $GITHUB_OUTPUT
+      - id: version_label
+        run: echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
+      outputs:
+          versions: $${{toJSON(steps.*.outputs.version)}}
+
+  create_manifest:
+    runs-on: ubuntu-latest
+    needs:
+      - matrix-prep-version:
+    strategy:
+        matrix:
+            version: ${{fromJSON(needs.matrix-prep-version.outputs.versions)}}
+    steps:
       -
         name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -90,34 +94,25 @@ jobs:
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
       -
         name: create manifest and push it
+        # create and sign "$version" manifest
         run: | 
-          echo "version is ${{ steps.meta.outputs.version }}" 
-          # create and sign "$version" manifest
-          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
-          docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
-          docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
-          # create and sign  "latest" manifest
-          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:latest --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
-          docker pull ${{ env.REGISTRY_IMAGE }}:latest
-          docker trust sign ${{ env.REGISTRY_IMAGE }}:latest
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
+          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} --amend ${{env.REGISTRY_IMAGE}}:${{matrix.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{matrix.version}}-arm64
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
+          docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
         env: 
           DOCKER_CONTENT_TRUST: 0
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
       - 
         name: Verify signatures
         run: |
-          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
           docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:latest
       -
         name: check that secure download works
         run: |
-          docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
-          docker run ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}  --version
-          docker pull ${{ env.REGISTRY_IMAGE }}:latest
-          docker run ${{ env.REGISTRY_IMAGE }}:latest  --version
+          docker pull ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
+          docker run ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}  --version
         env:
           DOCKER_CONTENT_TRUST: 1
