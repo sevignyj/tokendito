@@ -61,7 +61,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
       - id: latest_label
-        run: echo "version=lastest" >> $GITHUB_OUTPUT
+        run: echo "version=latest" >> $GITHUB_OUTPUT
       - id: version_label
         run: echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
     outputs:
@@ -73,7 +73,7 @@ jobs:
       - matrix-prep-version
     strategy:
         matrix:
-            version: ${{fromJSON(needs.matrix-prep-version.outputs.versions)}}
+            version: ${{ fromJSON(needs.matrix-prep-version.outputs.versions) }}
     steps:
       -
         name: Login to Docker Hub
