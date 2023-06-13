@@ -1,4 +1,4 @@
-name: buildandsign
+name: build and sign
 
 on:
   push:
@@ -107,8 +107,6 @@ jobs:
         env: 
           DOCKER_CONTENT_TRUST: 0
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
-#          DOCKER_PRIVATE_KEY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
-#          DOCKER_CLI_EXPERIMENTAL: enabled
       - 
         name: Verify signatures
         run: |
