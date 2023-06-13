@@ -63,7 +63,7 @@ jobs:
       - id: latest_label
         run: echo "version=latest" >> $GITHUB_OUTPUT
       - id: version_label
-        run: echo "$GITUB_OUTPUT; echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT; echo "$GITHUB_OUTPUT"
+        run: echo "output1 is $GITUB_OUTPUT"; echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT; echo "output2 is $GITHUB_OUTPUT"
     outputs:
           versions: ${{toJSON(steps.*.outputs.version)}}
 
