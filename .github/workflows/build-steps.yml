@@ -100,6 +100,11 @@ jobs:
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
           docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
           docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
+          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:latest --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
+          docker pull ${{ env.REGISTRY_IMAGE }}:latest
+          docker trust sign ${{ env.REGISTRY_IMAGE }}:latest
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
         env: 
           DOCKER_CONTENT_TRUST: 0
 #          DOCKER_PRIVATE_KEY_ID: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
@@ -111,10 +116,13 @@ jobs:
         name: Verify signatures
         run: |
           docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:latest
       -
         name: check that secure download works
         run: |
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }} 
           docker run ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}  --version
+          docker pull ${{ env.REGISTRY_IMAGE }}:latest
+          docker run ${{ env.REGISTRY_IMAGE }}:latest  --version
         env:
           DOCKER_CONTENT_TRUST: 1
