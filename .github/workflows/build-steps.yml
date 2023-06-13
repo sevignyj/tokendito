@@ -64,13 +64,13 @@ jobs:
         run: echo "version=lastest" >> $GITHUB_OUTPUT
       - id: version_label
         run: echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
-      outputs:
+    outputs:
           versions: $${{toJSON(steps.*.outputs.version)}}
 
   create_manifest:
     runs-on: ubuntu-latest
     needs:
-      - matrix-prep-version:
+      - matrix-prep-version
     strategy:
         matrix:
             version: ${{fromJSON(needs.matrix-prep-version.outputs.versions)}}
