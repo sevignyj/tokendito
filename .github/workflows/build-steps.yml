@@ -70,7 +70,8 @@ jobs:
         id: sanitize_output
         run: |
           echo "we have ${{ steps.meta.outputs.tags }}"
-          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+          # echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+          echo "{ \"version:\": \"1.1\"}" >> $GITHUB_OUTPUT
           # run echo "::set-output name=matrix::{\"node\": ${{ steps.meta.outputs.tags }}}"
           
   create_manifest:
