@@ -79,7 +79,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          sanitized_list=$(echo ${{ teps.meta.outputs.tags}} | sed 's/ /,/g')
+          sanitized_list=$(echo ${{ steps.meta.outputs.tags}} | sed 's/ /,/g')
           echo "versions=[$sanitized_list]"
           echo "versions=[\"latest\", \"1.3\", \"1.4\"]" >> $GITHUB_OUTPUT
           
