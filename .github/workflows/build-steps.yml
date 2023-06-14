@@ -48,7 +48,7 @@ jobs:
     needs:
       - build_archs
     outputs:
-      myoutput: ${{ steps.sanitize_output.outputs.myoutput }}    
+      versions: ${{ steps.sanitize_output.outputs.versions }}    
     steps:
  #     -
  #       name: Login to Docker Hub
@@ -77,8 +77,8 @@ jobs:
         run: |
           # echo "we have ${{ steps.meta.outputs.tags }}"
           # echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
-          # echo "{ \"version:\": \"1.1\"}" >> $GITHUB_OUTPUT
-          echo "myoutput=blah" >> $GITHUB_OUTPUT 
+          echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
+          #echo "versions=" >> $GITHUB_OUTPUT 
           
   create_manifest:
     runs-on: ubuntu-latest
@@ -86,7 +86,7 @@ jobs:
         - generate-version-matrix
     strategy:
         matrix:
-            version: ${{ needs.generate-version-matrix.outputs.myoutput }}
+            version: ${{ needs.generate-version-matrix.outputs.versions }}
     steps:
       -
         name: Login to Docker Hub
