@@ -79,7 +79,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          echo ${{fromJSON(steps.meta.outputs.tags)}}  >> $GITHUB_OUTPUT
+          echo "${{toJSON(steps.meta.outputs.tags)}}"  >> $GITHUB_OUTPUT
           # version_list="${{ steps.meta.outputs.tags }}"
           # sanitized_list=$(echo $version_list | sed 's/ /,/g')
           # echo "versions=[$sanitized_list]"
