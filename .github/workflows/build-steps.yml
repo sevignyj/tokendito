@@ -86,7 +86,7 @@ jobs:
         - generate-version-matrix
     strategy:
         matrix:
-            version: ${{ needs.generate-version-matrix.outputs.versions }}
+            version: ${{ fromJSON(needs.generate-version-matrix.outputs.versions) }}
     steps:
       -
         name: Login to Docker Hub
