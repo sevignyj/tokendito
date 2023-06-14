@@ -49,7 +49,7 @@ jobs:
     needs:
       - build_archs
     outputs:
-      versions: ${{ steps.produce_output.outputs.tags }}    
+      versions: ${{ steps.produce_output.outputs.matrix }}    
     steps:
       -
         name: Checkout
@@ -79,7 +79,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          echo "${{toJSON(steps.meta.outputs.tags)}}"  >> $GITHUB_OUTPUT
+          echo "matrix=${{steps.meta.outputs.tags}}"  >> $GITHUB_OUTPUT
           # version_list="${{ steps.meta.outputs.tags }}"
           # sanitized_list=$(echo $version_list | sed 's/ /,/g')
           # echo "versions=[$sanitized_list]"
@@ -92,7 +92,7 @@ jobs:
         - get_versions
     strategy:
         matrix:
-            version: ${{ needs.get_versions.outputs }}
+            version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
     steps:
       -
         name: Login to Docker Hub
