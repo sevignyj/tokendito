@@ -79,7 +79,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          echo "we have "${{steps.meta.outputs.tags}}"
+          echo "we have ${{steps.meta.outputs.tags}}"
           echo "versions=[${{steps.meta.outputs.tags}}]]" >> $GITHUB_OUTPUT
           #echo "versions=[${{fromJSON(steps.meta.outputs.tags)}}" >> $GITHUB_OUTPUT
           
