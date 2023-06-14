@@ -48,7 +48,7 @@ jobs:
     needs:
       - build_archs
     outputs:
-      versions: ${{ steps.sanitize_output.outputs.tags }}    
+      versions: ${{ steps.sanitize_output.outputs }}    
     steps:
       - 
         name: extract docker meta
