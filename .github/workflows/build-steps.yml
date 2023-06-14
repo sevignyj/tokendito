@@ -49,7 +49,7 @@ jobs:
     needs:
       - build_archs
     outputs:
-      versions: ${{ steps.produce_output.outputs }}    
+      versions: ${{ steps.produce_output.outputs.tags }}    
     steps:
       -
         name: Checkout
