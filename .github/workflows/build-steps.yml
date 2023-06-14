@@ -79,6 +79,10 @@ jobs:
         name: produce output
         id: produce_output
         run: |
+          data=${{toJSON(steps.meta.outputs.json).tags}}
+          echo "we have $data"
+          data=${{fromJSON(steps.meta.outputs.json).tags}}
+          echo "we have $data"
           echo "matrix=${{toJSON(steps.meta.outputs.json).tags}}"  >> $GITHUB_OUTPUT
           # version_list="${{ steps.meta.outputs.tags }}"
           # sanitized_list=$(echo $version_list | sed 's/ /,/g')
