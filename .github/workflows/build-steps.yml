@@ -72,6 +72,7 @@ jobs:
 #            type=semver,pattern={{major}}.{{minor}}
 #            type=semver,pattern={{major}}.{{minor}}.{{patch}}
 #      - 
+      - 
         name: sanitize output
         id: sanitize_output
         run: |
