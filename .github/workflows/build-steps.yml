@@ -87,10 +87,7 @@ jobs:
         id: sanitize_output
         run: |
           echo "we have ${{steps.meta.outputs.version}}"
-          # echo "we have ${{ steps.meta.outputs.tags }}"
-          # echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
           echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
-          #echo "versions=" >> $GITHUB_OUTPUT 
           
   create_manifest:
     runs-on: ubuntu-latest
