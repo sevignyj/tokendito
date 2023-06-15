@@ -43,7 +43,7 @@ jobs:
         run: |
           docker buildx build . --provenance=false --platform linux/${{matrix.arch}} --tag ${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-${{matrix.arch}} --push
 
-  get_versions:
+  get_versions_matrix:
     needs: build_archs
     runs-on: ubuntu-latest
     outputs:
@@ -79,7 +79,7 @@ jobs:
           echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
           
   create_manifest:
-    needs: get_versions
+    needs: get_versions_matrix
     runs-on: ubuntu-latest
     strategy:
         matrix:
