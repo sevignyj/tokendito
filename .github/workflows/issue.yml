@@ -55,4 +55,5 @@ jobs:
         name: echo matrix
         # create and sign "$version" manifest
         run: | 
-          echo "we have ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}"
+          version=$(echo ${{matrix.version}} | sed \"s/${{env.REGISTRY}}\///g\"")
+          echo "we have $version"
