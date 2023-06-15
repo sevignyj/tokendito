@@ -40,17 +40,19 @@ jobs:
           #LABELS_JSON="${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}"
           #echo "we have $LABELS_JSON"
           message="versions=[\"latest\", \"1.1\", \"1.2\"]"
-        #message="
-          #[
-          # \"docker.io/***/jptest:5.154.0\",
-          # \"docker.io/***/jptest:5\",
-          # \"docker.io/***/jptest:5.154\",
-          # \"docker.io/***/jptest:sha-9467de2ed1fc665bab5a3992a2bc07558c1adc35\",
-          # \"docker.io/***/jptest:latest\"
-          #]"
-          echo "$message << EOF" >> $GITHUB_OUTPUT
+          echo "versions=<<EOF" >> $GITHUB_OUTPUT
+          echo "$message" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
+          message="
+          [
+           \"docker.io/***/jptest:5.154.0\",
+           \"docker.io/***/jptest:5\",
+           \"docker.io/***/jptest:5.154\",
+           \"docker.io/***/jptest:sha-9467de2ed1fc665bab5a3992a2bc07558c1adc35\",
+           \"docker.io/***/jptest:latest\"
+          ]"
+          echo "we have $message"
 
   test_output:
     runs-on: ubuntu-latest
