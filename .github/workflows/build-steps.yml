@@ -15,8 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-#        arch: [arm64, amd64]
-        arch: [amd64]
+        arch: [arm64, amd64]
     steps:
       -
         name: Checkout
@@ -124,12 +123,13 @@ jobs:
       - 
         name: Verify signatures
         run: |
+          version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
           docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:$version
       -
         name: check that secure download works
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
-          docker pull ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
-          docker run ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}  --version
+          docker pull ${{ env.REGISTRY_IMAGE }}:$version 
+          docker run ${{ env.REGISTRY_IMAGE }}:$version  --version
         env:
           DOCKER_CONTENT_TRUST: 1
