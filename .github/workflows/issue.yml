@@ -38,11 +38,10 @@ jobs:
         id: produce_output
         run: |
           message="versions=[\"latest\", \"1.1\", \"1.2\"]"
-          echo "versions=<<EOF" >> $GITHUB_OUTPUT
-          echo "$message" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
-         
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "versions=<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$message" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"         
 
   test_output:
     runs-on: ubuntu-latest
