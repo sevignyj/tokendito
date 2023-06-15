@@ -130,7 +130,6 @@ jobs:
         name: check that secure download works
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
-          echo "docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force"
           # docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force
           docker pull ${{ env.REGISTRY_IMAGE }}:$version 
           docker run ${{ env.REGISTRY_IMAGE }}:$version  --version         
