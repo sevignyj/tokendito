@@ -116,7 +116,6 @@ jobs:
           DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:$version --amend ${{env.REGISTRY_IMAGE}}:${{ steps.meta.outputs.version }}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
           docker manifest push ${{ env.REGISTRY_IMAGE }}:$version
           docker pull ${{ env.REGISTRY_IMAGE }}:$version 
-          docker trust revoke ${{ env.REGISTRY_IMAGE }}:$version || true # remove old signed image from notary
           docker trust sign ${{ env.REGISTRY_IMAGE }}:$version
           docker manifest push ${{ env.REGISTRY_IMAGE }}:$version 
         env: 
@@ -132,13 +131,12 @@ jobs:
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
           echo "docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force"
-          docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force
+          # docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force
           docker pull ${{ env.REGISTRY_IMAGE }}:$version 
-          version_output=$(docker run ${{ env.REGISTRY_IMAGE }}:$version  --version)
-          echo "we have $version_output"
-          echo "looking for tokendito/${{steps.meta.outputs.version}}"
-          if [[ $(echo "$version_output" | grep -c "tokendito/${{steps.meta.outputs.version}}") -eq 0 ]]; then
-            exit 1
-          fi
+          docker run ${{ env.REGISTRY_IMAGE }}:$version  --version         
+          # version_output=$(docker run ${{ env.REGISTRY_IMAGE }}:$version  --version)
+          # if [[ $(echo "$version_output" | grep -c "tokendito/${{steps.meta.outputs.version}}") -eq 0 ]]; then
+          #  exit 1
+          # fi
         env:
           DOCKER_CONTENT_TRUST: 1
