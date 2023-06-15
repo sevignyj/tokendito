@@ -1,0 +1,75 @@
+name:  get tags
+
+on:
+  push:
+    tags:
+     - '[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  REGISTRY: docker.io
+  REGISTRY_IMAGE: jpsevigny/jptest
+
+jobs:
+  get_versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.produce_output.outputs.versions }}    
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: extract docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,format=long
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+      - 
+        name: produce output
+        id: produce_output
+        run: |
+          TAGS_JSON=${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
+          delimiter="$(openssl rand -hex 8)"
+          echo "output-name<<${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "version=$TAGS_JSON" >> "${GITHUB_OUTPUT}"
+          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "we have $TAGS_JSON" 
+          #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
+
+  test_output:
+    runs-on: ubuntu-latest
+    needs:
+      - get_versions
+    steps:
+      - 
+        name: something
+        run: |
+          echo "hello ${{ needs.get_versions.outputs.versions }}"
+
+  test_matrix:
+    runs-on: ubuntu-latest
+    needs: [test_output, get_versions]
+    strategy:
+        matrix:
+            version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
+    steps:
+      -
+        name: echo matrix
+        # create and sign "$version" manifest
+        run: | 
+          echo "we have ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}"
