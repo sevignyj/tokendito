@@ -83,6 +83,7 @@ jobs:
             ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
+          echo "we have $TAGS_JSON"
           echo "versions=$TAGS_JSON" >>  $GITHUB_OUTPUT
           # version_list="${{ steps.meta.outputs.tags }}"
           # sanitized_list=$(echo $version_list | sed 's/ /,/g')
