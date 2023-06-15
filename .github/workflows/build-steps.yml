@@ -93,7 +93,7 @@ jobs:
         - get_versions
     strategy:
         matrix:
-            version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
+            version: ${{ needs.get_versions.outputs.versions }}
     steps:
       -
         name: Login to Docker Hub
