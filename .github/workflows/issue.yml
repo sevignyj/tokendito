@@ -41,7 +41,7 @@ jobs:
           ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ' |  awk -F':' '{print $$2}')
+          TAGS_JSON=`echo $TAGS_JSON | tr '\n' ' ' |  awk -F':' '{print $2}'`
           echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
 
   test_matrix:
