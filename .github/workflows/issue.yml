@@ -37,10 +37,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          LABELS_JSON=$(cat <<EOF
-          ${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-          EOF
-          )
+          LABELS_JSON=${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           echo "we have ${LABELS_JSON}" 
           echo "LABELS_JSON<<EOF" >> $GITHUB_ENV
           echo "version=${LABELS_JSON}" >> "$GITHUB_ENV"
