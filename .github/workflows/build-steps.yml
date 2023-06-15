@@ -79,7 +79,11 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
+          TAGS_JSON=$(cat <<'EOF'
+            ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
+          EOF
+          )
+          echo "versions=$TAGS_JSON" >> $GITHUB_OUTPUT
 
   test_output:
     runs-on: ubuntu-latest
