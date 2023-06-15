@@ -121,13 +121,21 @@ jobs:
         env: 
           DOCKER_CONTENT_TRUST: 0
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
+
+  verify_signatures:
+    needs: [get_versions_matrix, create_manifest]
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          version: ${{ fromJSON(needs.get_versions_matrix.outputs.versions) }}  
+    steps:
       - 
         name: Verify signatures
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
           docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:$version
       -
-        name: check that secure download works
+        name: verify that secure download works
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
           # docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force
