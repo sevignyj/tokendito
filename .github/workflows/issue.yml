@@ -37,16 +37,14 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          # TAGS_JSON=${{ fromJSON(steps.meta.outputs.json).tags }}
-          LABELS_JSON=$(cat <<'EOF'
-            ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-            EOF
-            )
+          LABELS_JSON=$(cat <<EOF
+          ${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}
+          EOF
+          )
           echo "we have ${LABELS_JSON}" 
-          delimiter="$(openssl rand -hex 8)"
-          echo "output-name<<${delimiter}" >> "${GITHUB_OUTPUT}"
-          echo "version=${LABELS_JSON}" >> "${GITHUB_OUTPUT}"
-          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "LABELS_JSON<<EOF" >> $GITHUB_ENV
+          echo "version=${LABELS_JSON}" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
           #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
 
   test_output:
