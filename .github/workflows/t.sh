@@ -1,9 +1,8 @@
 
 
 REGISTRY="docker.io"
-t="docker.io/jpsevigny/jptest:5.180.0"
+TAGS_JSON="docker.io/jpsevigny/jptest:5.180.0"
 
 
-echo $t | sed "s
-
-v=$(echo $t | sed 
+TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ' |  awk -F':' '{print $2}')
+echo $TAGS_JSON
