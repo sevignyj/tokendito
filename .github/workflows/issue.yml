@@ -42,7 +42,8 @@ jobs:
           EOF
           )
           TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
-          echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
+          versions_only=$(echo "$TAGS_JSON" | awk -F':' '{print $2}')
+          echo "versions=$versions_only" >> "$GITHUB_OUTPUT"
 
   test_matrix:
     runs-on: ubuntu-latest
@@ -56,4 +57,4 @@ jobs:
         # create and sign "$version" manifest
         run: | 
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
-          echo "$version"
+          echo "${{matrix.version}}"
