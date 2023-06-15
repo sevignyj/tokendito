@@ -41,7 +41,7 @@ jobs:
           ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          TAGS_JSON=`echo $TAGS_JSON | tr '\n' ' ' |  awk -F':' '{print $2}'`
+          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
           echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
 
   test_matrix:
@@ -55,4 +55,5 @@ jobs:
         name: echo matrix
         # create and sign "$version" manifest
         run: | 
-          echo "we have ${{matrix.version}}"
+          version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
+          echo "we have $version"
