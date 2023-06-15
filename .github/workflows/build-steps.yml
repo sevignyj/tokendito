@@ -79,6 +79,10 @@ jobs:
         name: produce output
         id: produce_output
         run: |
+          data=$(jq -s ${{ steps.meta.outputs.tags }})
+          echo "we have  $data"
+          data = ${{steps.meta.outputs.tags}}
+          echo "we also have $data"
           data=${{toJSON(steps.meta.outputs.json).tags}}
           echo "we have $data"
           data=${{fromJSON(steps.meta.outputs.json).tags}}
