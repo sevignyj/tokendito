@@ -56,3 +56,4 @@ jobs:
         # create and sign "$version" manifest
         run: | 
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
+          echo "$version"
