@@ -41,8 +41,8 @@ jobs:
           ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
-          echo "versions=$TAGS_JSON | sed  -s \"${{ env.REGISTRY }}\//g\"" >> "$GITHUB_OUTPUT"
+          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ' |  awk -F':' '{print \$2}')
+          echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
 
   test_matrix:
     runs-on: ubuntu-latest
@@ -55,5 +55,4 @@ jobs:
         name: echo matrix
         # create and sign "$version" manifest
         run: | 
-          version=$(echo ${{matrix.version}} | "s/${{env.REGISTRY}}\///g")
-          echo "we have $version"
+          echo "we have ${{matrix.version}}"
