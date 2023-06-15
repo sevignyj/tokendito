@@ -79,11 +79,11 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          TAGS_JSON=$(cat <<'EOF'
-            ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-          EOF
-          )
-          echo "we have $TAGS_JSON"
+          #TAGS_JSON=$(cat <<'EOF'
+          #  ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
+          #EOF
+          #)
+          #echo "we have $TAGS_JSON"
           # echo "versions=$TAGS_JSON" >>  $GITHUB_OUTPUT
           #echo "[
           #  \"docker.io/***/jptest:5.154.0\",
