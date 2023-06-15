@@ -83,7 +83,8 @@ jobs:
             ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          echo "versions=$TAGS_JSON" >> $GITHUB_OUTPUT
+          echo "we have $TAGS_JSON"
+          echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
 
   test_output:
     runs-on: ubuntu-latest
