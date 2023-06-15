@@ -79,25 +79,7 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          #TAGS_JSON=$(cat <<'EOF'
-          #  ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-          #EOF
-          #)
-          #echo "we have $TAGS_JSON"
-          # echo "versions=$TAGS_JSON" >>  $GITHUB_OUTPUT
-          #echo "[
-          #  \"docker.io/***/jptest:5.154.0\",
-          #  \"docker.io/***/jptest:5\",
-          #  \"docker.io/***/jptest:5.154\",
-          #  \"docker.io/***/jptest:sha-9467de2ed1fc665bab5a3992a2bc07558c1adc35\",
-          #  \"docker.io/***/jptest:latest\"
-          #]" >> $GITHUB_OUTPUT
           echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
-          # version_list="${{ steps.meta.outputs.tags }}"
-          # sanitized_list=$(echo $version_list | sed 's/ /,/g')
-          # echo "versions=[$sanitized_list]"
-          # echo "versions=[latest, 1.3, 1.4]" 
-          # echo "versions=[latest, 1.3, 1.4]" >> $GITHUB_OUTPUT
 
   test_output:
     runs-on: ubuntu-latest
