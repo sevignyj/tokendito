@@ -46,20 +46,12 @@ jobs:
 
   get_versions:
     runs-on: ubuntu-latest
-    needs:
-      - build_archs
     outputs:
       versions: ${{ steps.produce_output.outputs.versions }}    
     steps:
       -
         name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - 
         name: extract docker meta
         id: meta
@@ -79,20 +71,19 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          TAGS_JSON=${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-          delimiter="$(openssl rand -hex 8)"
-          echo "output-name<<${delimiter}" >> "${GITHUB_OUTPUT}"
-          echo "version=$TAGS_JSON" >> "${GITHUB_OUTPUT}"
-          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
-          echo "we have $TAGS_JSON" 
-          #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
-
+          TAGS_JSON=$(cat <<'EOF'
+          ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
+          EOF
+          )
+          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
+          echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
+          
   create_manifest:
     runs-on: ubuntu-latest
     needs: get_versions
     strategy:
         matrix:
-            version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
+          version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
     steps:
       -
         name: Login to Docker Hub
@@ -103,7 +94,6 @@ jobs:
       -
         name: create files for signing
         run: | 
-          echo "we have ${{ needs.generate-version-matrix.outputs.versions }} "
           mkdir -p ~/.docker/trust/private
           echo "${DOCKER_PRIVATE_KEY}" > ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
           chmod 0600 ~/.docker/trust/private/${DOCKER_PRIVATE_KEY_ID}.key
@@ -122,21 +112,23 @@ jobs:
         name: create manifest and push it
         # create and sign "$version" manifest
         run: | 
-          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} --amend ${{env.REGISTRY_IMAGE}}:${{ steps.meta.outputs.version }}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
-          docker pull ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
-          docker trust sign ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
-          docker manifest push ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
+          version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
+          DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:$version --amend ${{env.REGISTRY_IMAGE}}:${{ steps.meta.outputs.version }}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{steps.meta.outputs.version}}-arm64
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:$version
+          docker pull ${{ env.REGISTRY_IMAGE }}:$version 
+          docker trust sign ${{ env.REGISTRY_IMAGE }}:$version
+          docker manifest push ${{ env.REGISTRY_IMAGE }}:$version 
         env: 
           DOCKER_CONTENT_TRUST: 0
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}"
       - 
         name: Verify signatures
         run: |
-          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}
+          docker trust inspect --pretty ${{ env.REGISTRY_IMAGE }}:$version
       -
         name: check that secure download works
         run: |
+          version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
           docker pull ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }} 
           docker run ${{ env.REGISTRY_IMAGE }}:${{ matrix.version }}  --version
         env:
