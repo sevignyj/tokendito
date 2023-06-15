@@ -37,8 +37,6 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          #LABELS_JSON="${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}"
-          #echo "we have $LABELS_JSON"
           message="versions=[\"latest\", \"1.1\", \"1.2\"]"
           echo "versions=<<EOF" >> $GITHUB_OUTPUT
           echo "$message" >> $GITHUB_OUTPUT
