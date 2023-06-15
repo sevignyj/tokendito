@@ -130,9 +130,12 @@ jobs:
         name: check that secure download works
         run: |
           version=$(echo "${{matrix.version}}" | awk -F':' '{print $2}')
+          echo "docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force"
           docker rmi ${{ env.REGISTRY_IMAGE }}:$version --force
           docker pull ${{ env.REGISTRY_IMAGE }}:$version 
           version_output=$(docker run ${{ env.REGISTRY_IMAGE }}:$version  --version)
+          echo "we have $version_output"
+          echo "looking for tokendito/${{steps.meta.outputs.version}}"
           if [[ $(echo "$version_output" | grep -c "tokendito/${{steps.meta.outputs.version}}") -eq 0 ]]; then
             exit 1
           fi
