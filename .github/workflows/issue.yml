@@ -37,12 +37,13 @@ jobs:
         name: produce output
         id: produce_output
         run: |
-          LABELS_JSON=$(cat <<'EOF'
+          TAGS_JSON=$(cat <<'EOF'
           ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          message="[\"latest\", \"1.1\", \"1.2\"]"
-          echo "versions=$message" >> "$GITHUB_OUTPUT"
+          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
+          echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
+          # message="[\"latest\", \"1.1\", \"1.2\"]"
           # echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
 
   test_output:
