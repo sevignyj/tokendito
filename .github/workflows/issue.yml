@@ -38,10 +38,18 @@ jobs:
         id: produce_output
         run: |
           LABELS_JSON=${{toJSON(fromJSON(steps.meta.outputs.json).tags) }}
-          echo "we have ${LABELS_JSON}" 
-          echo "LABELS_JSON<<EOF" >> $GITHUB_ENV
-          echo "version=${LABELS_JSON}" >> "$GITHUB_ENV"
-          echo "EOF" >> "$GITHUB_ENV"
+          echo "we have $LABELS_JSON"
+          message="
+          [
+           \"docker.io/***/jptest:5.154.0\",
+           \"docker.io/***/jptest:5\",
+           \"docker.io/***/jptest:5.154\",
+           \"docker.io/***/jptest:sha-9467de2ed1fc665bab5a3992a2bc07558c1adc35\",
+           \"docker.io/***/jptest:latest\"
+          ]"
+          echo "versions=<<EOF" >> $GITHUB_OUTPUT
+          echo "$message" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           #echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
 
   test_output:

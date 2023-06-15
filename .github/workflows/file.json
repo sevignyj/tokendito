@@ -1,0 +1,26 @@
+{
+  "target": {
+    "docker-metadata-action": {
+      "tags": [
+        "name/app:1.2.3",
+        "name/app:1.2",
+        "name/app:sha-90dd603",
+        "name/app:latest"
+      ],
+      "labels": {
+        "org.opencontainers.image.title": "Hello-World",
+        "org.opencontainers.image.description": "This your first repo!",
+        "org.opencontainers.image.url": "https://github.com/octocat/Hello-World",
+        "org.opencontainers.image.source": "https://github.com/octocat/Hello-World",
+        "org.opencontainers.image.version": "1.2.3",
+        "org.opencontainers.image.created": "2020-01-10T00:30:00.000Z",
+        "org.opencontainers.image.revision": "860c1904a1ce19322e91ac35af1ab07466440c37",
+        "org.opencontainers.image.licenses": "MIT"
+      },
+      "args": {
+        "DOCKER_META_IMAGES": "name/app",
+        "DOCKER_META_VERSION": "1.2.3"
+      }
+    }
+  }
+}
