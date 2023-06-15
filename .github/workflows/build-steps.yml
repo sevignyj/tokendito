@@ -49,7 +49,7 @@ jobs:
     needs:
       - build_archs
     outputs:
-      versions: ${{ steps.produce_output.outputs.versions }}    
+      versions: ${{ steps.produce_output.outputs }}    
     steps:
       -
         name: Checkout
@@ -84,7 +84,7 @@ jobs:
           EOF
           )
           echo "we have $TAGS_JSON"
-          echo "versions: $TAGS_JSON" >>  $GITHUB_OUTPUT
+          echo "$TAGS_JSON" >>  $GITHUB_OUTPUT
           # version_list="${{ steps.meta.outputs.tags }}"
           # sanitized_list=$(echo $version_list | sed 's/ /,/g')
           # echo "versions=[$sanitized_list]"
