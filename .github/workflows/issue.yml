@@ -42,23 +42,11 @@ jobs:
           EOF
           )
           TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ')
-          echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
-          # message="[\"latest\", \"1.1\", \"1.2\"]"
-          # echo "versions=[\"latest\", \"1.1\", \"1.2\"]" >> $GITHUB_OUTPUT
-
-  test_output:
-    runs-on: ubuntu-latest
-    needs:
-      - get_versions
-    steps:
-      - 
-        name: something
-        run: |
-          echo "hello ${{ needs.get_versions.outputs.versions }}"
+          echo "versions=$TAGS_JSON | sed  -s \"${{ env.REGISTRY }}\//g\"" >> "$GITHUB_OUTPUT"
 
   test_matrix:
     runs-on: ubuntu-latest
-    needs: [test_output, get_versions]
+    needs: get_versions
     strategy:
         matrix:
             version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
