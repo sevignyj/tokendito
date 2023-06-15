@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-          version: ${{ fromJSON(needs.get_versions.outputs.versions) }}
+          version: ${{ fromJSON(needs.get_versions_matrix.outputs.versions) }}
     steps:
       -
         name: Login to Docker Hub
