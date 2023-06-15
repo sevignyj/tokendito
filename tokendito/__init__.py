@@ -8,7 +8,7 @@ import sys
 
 from platformdirs import user_config_dir
 
-__version__ = "6.8.0"
+__version__ = "6.9.0"
 __title__ = "tokendito"
 __description__ = "Get AWS STS tokens from Okta SSO"
 __long_description_content_type__ = "text/markdown"
