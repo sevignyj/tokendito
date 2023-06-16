@@ -41,7 +41,7 @@ jobs:
           ${{ toJSON(fromJSON(steps.meta.outputs.json).tags) }}
           EOF
           )
-          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ') | sed "s/${{env.REGISTRY}}\///g" | sed "s/${{env.REGISTRY_IMAGE}}\://g"
+          TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ') | | sed "s|${{env.REGISTRY}}\/${{env.REGISTRY_IMAGE}}\:||g" 
           echo "tags are $TAGS_JSON"
           echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
 
