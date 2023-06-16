@@ -37,7 +37,7 @@ jobs:
             name: create manifest and push it
             # create and sign "$version" manifest
             run: | 
-              DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ github.event.inputs.manifest_version }}}} --amend ${{env.REGISTRY_IMAGE}}:${{ github.event.inputs.root_version }}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{github.event.inputs.root_version}}-arm64
+              DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${{ env.REGISTRY_IMAGE }}:${{ github.event.inputs.manifest_version }} --amend ${{env.REGISTRY_IMAGE}}:${{ github.event.inputs.root_version }}-amd64 --amend ${{env.REGISTRY_IMAGE}}:${{github.event.inputs.root_version}}-arm64
               docker manifest push ${{ env.REGISTRY_IMAGE }}:${{github.event.inputs.manifest_version}}
               docker pull ${{ env.REGISTRY_IMAGE }}:${{github.event.inputs.manifest_version}}
               docker trust sign ${{ env.REGISTRY_IMAGE }}:${{github.event.inputs.manifest_version}}
