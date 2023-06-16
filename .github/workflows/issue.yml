@@ -42,9 +42,7 @@ jobs:
           EOF
           )
           string_to_remove="${{env.REGISTRY}}/${{env.REGISTRY_IMAGE}}:"
-          echo "string to remove = $string_to_remove"
           TAGS_JSON=$(echo $TAGS_JSON | tr '\n' ' ' | sed "s|$string_to_remove||g" )
-          echo "tags are $TAGS_JSON"
           echo "versions=$TAGS_JSON" >> "$GITHUB_OUTPUT"
 
   test_matrix:
